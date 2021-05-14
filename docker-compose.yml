@@ -3,7 +3,7 @@ version: '2.2'
 services:
   exile-tf2:
     build: .
-    command: sh -c "/mysql.sh"
+    command: sh -c "./mysql.sh"
     depends_on:
       db:
         condition: service_healthy
@@ -19,7 +19,7 @@ services:
       retries: 10
     environment:
       - MYSQL_ROOT_PASSWORD=pass
-      - MYSQL_USER=root
+      - MYSQL_USER=user
       - MYSQL_PASSWORD=pass
       - MYSQL_DATABASE=exiletf2
 
