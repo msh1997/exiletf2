@@ -1,0 +1,27 @@
+version: '2.2'
+
+services:
+  exile-tf2:
+    build: .
+    command: sh -c "/mysql.sh"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    container_name: mysql
+    image: "mysql/mysql-server:latest"
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    environment:
+      - MYSQL_ROOT_PASSWORD=pass
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=pass
+      - MYSQL_DATABASE=exiletf2
+
+volumes:
+  database:
