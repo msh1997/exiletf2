@@ -1,5 +1,5 @@
 import {Message} from "discord.js";
-import {PingFinder} from "./ping-finder";
+import {PingFinder} from "./message-handlers/ping-finder";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../types";
 import { InjectRepository } from "typeorm-typedi-extensions";
@@ -7,13 +7,16 @@ import { DiscordMessage } from "../entity/DiscordMessage";
 import { Connection, Repository } from "typeorm";
 import { Service } from "typedi";
 import { DBManager } from "../db";
-import { EggFinder } from "./egg-finder";
+import { EggFinder } from "./message-handlers/egg-finder";
+import { METHODS } from "http";
+import { MiddleFingerRemover } from "./message-handlers/middle-finger-remover";
 
 @injectable()
 @Service()
 export class MessageResponder {
   private pingFinder: PingFinder;
   private eggFinder: EggFinder;
+  private middleFingerRemover: MiddleFingerRemover;
 
   private messageRepository: Repository<DiscordMessage>;
   private manager: DBManager;
@@ -21,15 +24,18 @@ export class MessageResponder {
   constructor(
     @inject(TYPES.PingFinder) pingFinder: PingFinder,
     @inject(TYPES.EggFinder) eggFinder: EggFinder,
-    @inject(TYPES.DBManager) manager: DBManager
+    @inject(TYPES.DBManager) manager: DBManager,
+    @inject(TYPES.MiddleFingerRemover) middleFingerRemover: MiddleFingerRemover,
   ) {
     this.pingFinder = pingFinder;
     this.eggFinder = eggFinder;
     this.messageRepository = manager.messageRepository;
     this.manager = manager;
+    this.middleFingerRemover = middleFingerRemover;
   }
 
   async handle(message: Message): Promise<Message | Message[]> {
+    if(this.middleFingerRemover.handleMessage(message)) { return; }
     this.messageRepository = this.manager.messageRepository;
     const discordMessage = new DiscordMessage();
     discordMessage.content = message.content;

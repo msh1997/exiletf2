@@ -6,4 +6,5 @@ export const TYPES = {
     MessageResponder: Symbol("MessageResponder"),
     PingFinder: Symbol("PingFinder"),
     EggFinder: Symbol("EggFinder"),
+    MiddleFingerRemover: Symbol("MiddleFingerRemover"),
   };
