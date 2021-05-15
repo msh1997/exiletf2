@@ -12,6 +12,12 @@ export class DiscordMessage {
     @Column()
     sender: string;
 
+    @Column()
+    guild: string;
+
+    @Column()
+    channel: string;
+
     @CreateDateColumn()
     createdAt: Date;
 

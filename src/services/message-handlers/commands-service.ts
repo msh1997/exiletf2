@@ -8,13 +8,19 @@ import { TYPES } from "../../types";
 @injectable()
 export class CommandsService {
 
-  private regexp = '!addcom';
   private DBManager: DBManager;
   private commandsMap = new Map();
+  private commandsRepository: Repository<Command>;
 
   constructor(@inject(TYPES.DBManager) manager: DBManager,){
       this.DBManager = manager;
-      this.DBManager.register(this.initializeCommandsMap.bind(this));
+      this.DBManager.register(async dbmanager => {
+        this.commandsRepository = dbmanager.commandsRepository;
+        let commands = await this.commandsRepository.find();
+
+        commands.forEach(command => this.addToHash(command));
+        console.log(commands);
+      });
   }
 
   public isAddCom(stringToSearch: string): boolean {
@@ -25,7 +31,6 @@ export class CommandsService {
   public storeCom(message: Message): Promise<Command> {
     const spcSplit = message.content.split(' ');
     const command = new Command();
-    const commandsRepository = this.DBManager.commandsRepository;
 
     command.commandName = spcSplit[1];
     command.response = spcSplit[2];
@@ -33,18 +38,10 @@ export class CommandsService {
     command.guild = message.guild.id;
 
     this.addToHash(command);
-    return commandsRepository.save(command);
+    return this.commandsRepository.save(command);
   }
 
-  public async initializeCommandsMap() {
-    const commandsRepository = this.DBManager.commandsRepository;
-    let commands = await commandsRepository.find();
-
-    commands.forEach(command => this.addToHash(command));
-    console.log(commands);
-  }
-
-  public addToHash(command: Command) {
+  private addToHash(command: Command) {
     let guild = command.guild;
       let commandName = command.commandName;
       if (!this.commandsMap.has(guild)) {

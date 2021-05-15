@@ -1,5 +1,4 @@
 import { injectable } from 'inversify';
-import { listMetadataForTarget } from 'inversify/lib/utils/serialization';
 import { createConnection, Repository } from 'typeorm';
 import { Command } from '../entity/Command';
 import { DiscordMessage } from '../entity/DiscordMessage';
@@ -9,8 +8,8 @@ import { DiscordMessage } from '../entity/DiscordMessage';
 export class DBManager {
   public messageRepository: Repository<DiscordMessage>;
   public commandsRepository: Repository<Command>;
-  public callbacks: Function[] = [];
-  public isInitialized: boolean = false;
+  private callbacks: Function[] = [];
+  private isInitialized: boolean = false;
 
   constructor() {
     createConnection().then(connection => {
@@ -18,7 +17,7 @@ export class DBManager {
       this.commandsRepository = connection.getRepository(Command);
       this.isInitialized = true;
       this.callbacks.forEach(callback => {
-        callback();
+        callback(this);
       })
     });
   }

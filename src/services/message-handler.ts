@@ -1,12 +1,10 @@
 import {Message} from "discord.js";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../types";
-import { InjectRepository } from "typeorm-typedi-extensions";
 import { DiscordMessage } from "../entity/DiscordMessage";
-import { Connection, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { Service } from "typedi";
 import { DBManager } from "../db";
-import { METHODS } from "http";
 import { MiddleFingerRemover } from "./message-handlers/middle-finger-remover";
 import { CommandsService } from "./message-handlers/commands-service";
 
@@ -27,16 +25,24 @@ export class MessageHandler {
     this.manager = manager;
     this.middleFingerRemover = middleFingerRemover;
     this.commandsService = commandsService;
+    this.manager.register(dbmanager => {
+      this.messageRepository = dbmanager.messageRepository;
+    });
+  }
+
+  private async saveMessage(message: Message) {
+    const discordMessage = new DiscordMessage();
+    discordMessage.content = message.content;
+    discordMessage.sender = message.member.displayName;
+    discordMessage.guild = message.guild.id;
+    discordMessage.channel = message.channel.id;
+    console.log(discordMessage);
+    const savedMessage = await this.messageRepository.save(discordMessage);
   }
 
   async handle(message: Message): Promise<Message | Message[]> {
     if(this.middleFingerRemover.handleMessage(message)) { return; }
-    this.messageRepository = this.manager.messageRepository;
-    const discordMessage = new DiscordMessage();
-    discordMessage.content = message.content;
-    discordMessage.sender = message.member.displayName;
-    console.log(discordMessage);
-    const savedMessage = await this.messageRepository.save(discordMessage);
+    this.saveMessage(message);
     if(this.commandsService.isAddCom(message.content)){
       this.commandsService.storeCom(message).then(command => {
         console.log(command);
