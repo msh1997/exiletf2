@@ -1,21 +1,21 @@
 import {Client, Message} from "discord.js";
 import {inject, injectable} from "inversify";
 import {TYPES} from "./types";
-import {MessageResponder} from "./services/message-responder";
+import {MessageHandler} from "./services/message-handler";
 
 @injectable()
 export class Bot {
   private client: Client;
   private readonly token: string;
-  private messageResponder: MessageResponder;
+  private messageHandler: MessageHandler;
 
   constructor(
     @inject(TYPES.Client) client: Client,
     @inject(TYPES.Token) token: string,
-    @inject(TYPES.MessageResponder) messageResponder: MessageResponder) {
+    @inject(TYPES.MessageHandler) messageResponder: MessageHandler) {
     this.client = client;
     this.token = token;
-    this.messageResponder = messageResponder;
+    this.messageHandler = messageResponder;
   }
 
   public listen(): Promise<string> {
@@ -26,7 +26,7 @@ export class Bot {
       }
 
       try {
-        await this.messageResponder.handle(message);
+        await this.messageHandler.handle(message);
       } catch (ex) { console.log(ex); }
     });
 
