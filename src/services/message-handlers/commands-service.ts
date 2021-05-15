@@ -10,9 +10,11 @@ export class CommandsService {
 
   private regexp = '!addcom';
   private DBManager: DBManager;
+  private commandsMap = new Map();
 
   constructor(@inject(TYPES.DBManager) manager: DBManager,){
       this.DBManager = manager;
+      this.DBManager.register(this.initializeCommandsMap.bind(this));
   }
 
   public isAddCom(stringToSearch: string): boolean {
@@ -29,11 +31,34 @@ export class CommandsService {
     command.response = spcSplit[2];
     command.reply = false;
     command.guild = message.guild.id;
-   
+
+    this.addToHash(command);
+
+    console.log(this.commandsMap);
 
     return commandsRepository.save(command);
   }
 
+  public async initializeCommandsMap() {
+    const commandsRepository = this.DBManager.commandsRepository;
+    let commands = await commandsRepository.find();
+
+    commands.forEach(command => this.addToHash(command));
+    console.log(commands);
+  }
+
+  public addToHash(command: Command) {
+    let guild = command.guild;
+      let commandName = command.commandName;
+      if (!this.commandsMap.has(guild)) {
+        let nameMap = new Map();
+        nameMap.set(commandName, command);
+        this.commandsMap.set(guild, nameMap);
+      } else {
+        let nameMap = this.commandsMap.get(guild);
+        nameMap.set(commandName, command);
+      }
+  }
 
 
 }
