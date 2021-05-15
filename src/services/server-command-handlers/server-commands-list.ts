@@ -5,7 +5,9 @@ export const COMMANDS: any = {
   DelCom: {
     value: "!delcom"
   },
-  ReplyCom: {},
+  ReplyCom: {
+    save: true
+  },
   MsgCount: {
     value: "!msgcount"
   }

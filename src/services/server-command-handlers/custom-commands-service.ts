@@ -58,6 +58,17 @@ export class CommandsService {
     }
   }
 
+  @Handle(COMMANDS.DelCom)
+  private delCom = async (message: Message) => {
+    const spcSplit = message.content.split('"');
+    console.log(spcSplit[1]);
+    let deleteResult = await this.commandsRepository.delete({
+      commandName: spcSplit[1]
+    });
+    if (deleteResult.affected == 0) message.channel.send("No commands deleted");
+    else message.channel.send("Command deleted");
+  }
+
   private addToHash = (command: Command) => {
     let guild = command.guild;
       let commandName = command.commandName;
