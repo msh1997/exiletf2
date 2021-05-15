@@ -5,8 +5,9 @@ import {Bot} from "./bot";
 import {Client} from "discord.js";
 import { MessageHandler } from "./services/message-handler";
 import { DBManager } from "./db";
-import { MiddleFingerRemover } from "./services/message-handlers/middle-finger-remover";
-import { CommandsService } from "./services/message-handlers/commands-service";
+import { MiddleFingerRemover } from "./services/middle-finger-remover";
+import { CommandsService } from "./services/server-command-handlers/custom-commands-service";
+import { MessageStatsService } from "./services/server-command-handlers/message-stats-service";
 
 let container = new Container();
 
@@ -17,5 +18,6 @@ container.bind<string>(TYPES.Token).toConstantValue(process.env.BOT_TOKEN);
 container.bind<MessageHandler>(TYPES.MessageHandler).to(MessageHandler).inSingletonScope();
 container.bind<MiddleFingerRemover>(TYPES.MiddleFingerRemover).to(MiddleFingerRemover).inSingletonScope();
 container.bind<CommandsService>(TYPES.CommandsService).to(CommandsService).inSingletonScope();
+container.bind<MessageStatsService>(TYPES.MessageStatsService).to(MessageStatsService).inSingletonScope();
 
 export default container;

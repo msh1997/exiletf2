@@ -4,7 +4,10 @@ import { Repository } from "typeorm";
 import { DBManager } from "../../db";
 import { Command } from "../../entity/Command";
 import { TYPES } from "../../types";
+import { CommandHandler, Handle } from "./server-commands-config";
+import { COMMANDS } from "./server-commands-list";
 
+@CommandHandler
 @injectable()
 export class CommandsService {
 
@@ -13,35 +16,49 @@ export class CommandsService {
   private commandsRepository: Repository<Command>;
 
   constructor(@inject(TYPES.DBManager) manager: DBManager,){
-      this.DBManager = manager;
-      this.DBManager.register(async dbmanager => {
-        this.commandsRepository = dbmanager.commandsRepository;
-        let commands = await this.commandsRepository.find();
+    this.DBManager = manager;
+    this.DBManager.register(async dbmanager => {
+      this.commandsRepository = dbmanager.commandsRepository;
+      let commands = await this.commandsRepository.find();
 
-        commands.forEach(command => this.addToHash(command));
-        console.log(commands);
-      });
+      commands.forEach(command => this.addToHash(command));
+    });
   }
 
-  public isAddCom(stringToSearch: string): boolean {
-    const spcSplit = stringToSearch.split(' ');
+  public isAddCom = (message: Message): boolean => {
+    const spcSplit = message.content.split(' ');
     return spcSplit[0] === '!addcom';
   }
 
-  public storeCom(message: Message): Promise<Command> {
+  public isDelCom = (message: Message): boolean => {
     const spcSplit = message.content.split(' ');
+    return spcSplit[0] === '!delcom';
+  }
+
+  @Handle(COMMANDS.AddCom)
+  public addCom = async (message: Message) => {
+    const spcSplit = message.content.split('"');
     const command = new Command();
 
-    command.commandName = spcSplit[1];
-    command.response = spcSplit[2];
+    command.commandName = spcSplit[1].trim();
+    command.response = spcSplit[3].trim();
     command.reply = false;
     command.guild = message.guild.id;
 
-    this.addToHash(command);
-    return this.commandsRepository.save(command);
+    const existingCommand = await this.commandsRepository.find({
+      commandName: command.commandName
+    });
+    if (existingCommand.length === 0) {
+      this.addToHash(command);
+      await this.commandsRepository.save(command);
+      message.channel.send("Command has been added");
+    }
+    else {
+      message.channel.send("Command already exists");
+    }
   }
 
-  private addToHash(command: Command) {
+  private addToHash = (command: Command) => {
     let guild = command.guild;
       let commandName = command.commandName;
       if (!this.commandsMap.has(guild)) {
@@ -54,11 +71,12 @@ export class CommandsService {
       }
   }
 
-  public isCommand(message: Message): boolean {
+  public isCommand = (message: Message): boolean => {
     return this.commandsMap.get(message.guild.id) !== undefined && this.commandsMap.get(message.guild.id).get(message.content) !== undefined;
   }
 
-  public replyCommand(message: Message) {
+  @Handle(COMMANDS.ReplyCom)
+  public replyCommand = (message: Message) => {
     let command = this.commandsMap.get(message.guild.id).get(message.content);
     if(command.reply) {
       message.reply(command.response);

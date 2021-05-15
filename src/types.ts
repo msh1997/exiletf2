@@ -6,4 +6,5 @@ export const TYPES = {
     MessageHandler: Symbol("MessageHandler"),
     MiddleFingerRemover: Symbol("MiddleFingerRemover"),
     CommandsService: Symbol("CommandsService"),
+    MessageStatsService: Symbol("MessageStatsService"),
   };
