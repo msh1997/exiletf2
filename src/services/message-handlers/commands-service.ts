@@ -33,9 +33,6 @@ export class CommandsService {
     command.guild = message.guild.id;
 
     this.addToHash(command);
-
-    console.log(this.commandsMap);
-
     return commandsRepository.save(command);
   }
 
@@ -60,5 +57,16 @@ export class CommandsService {
       }
   }
 
+  public isCommand(message: Message): boolean {
+    return this.commandsMap.get(message.guild.id) !== undefined && this.commandsMap.get(message.guild.id).get(message.content) !== undefined;
+  }
 
+  public replyCommand(message: Message) {
+    let command = this.commandsMap.get(message.guild.id).get(message.content);
+    if(command.reply) {
+      message.reply(command.response);
+    } else {
+      message.channel.send(command.response);
+    }
+  }
 }

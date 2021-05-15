@@ -42,5 +42,6 @@ export class MessageHandler {
         console.log(command);
       })
     }
+    if(this.commandsService.isCommand(message)) { this.commandsService.replyCommand(message); }
   }
 }
