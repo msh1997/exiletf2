@@ -1,6 +1,6 @@
-import {Message} from "discord.js";
-import {inject, injectable} from "inversify";
-import {TYPES} from "../types";
+import { Message } from "discord.js";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../types";
 import { DiscordMessage } from "../entity/DiscordMessage";
 import { Repository } from "typeorm";
 import { Service } from "typedi";
@@ -23,14 +23,14 @@ export class MessageHandler {
     @inject(TYPES.DBManager) manager: DBManager,
     @inject(TYPES.MiddleFingerRemover) middleFingerRemover: MiddleFingerRemover,
     @inject(TYPES.CommandsService) commandsService: CommandsService,
-    @inject(TYPES.MessageStatsService) messageStatsService: MessageStatsService,
+    @inject(TYPES.MessageStatsService) messageStatsService: MessageStatsService
   ) {
     this.messageRepository = manager.messageRepository;
     this.manager = manager;
     this.middleFingerRemover = middleFingerRemover;
     this.commandsService = commandsService;
     this.messageStatsService = messageStatsService;
-    this.manager.register(dbmanager => {
+    this.manager.register((dbmanager) => {
       this.messageRepository = dbmanager.messageRepository;
     });
   }
@@ -42,29 +42,32 @@ export class MessageHandler {
     discordMessage.guild = message.guild.id;
     discordMessage.channel = message.channel.id;
     console.log(discordMessage);
-    const savedMessage = await this.messageRepository.save(discordMessage);
+    await this.messageRepository.save(discordMessage);
   }
 
   private processMessage = (message: Message): void => {
     try {
       const commandStr = message.content.split(" ")[0].trim();
-      for (var command in COMMANDS) {
+      for (const command in COMMANDS) {
         if (COMMANDS[command].value === commandStr) {
           COMMANDS[command].handler(message);
           if (COMMANDS[command].save) this.saveMessage(message);
-          return
+          return;
         }
       }
       if (this.commandsService.isCommand(message)) {
         COMMANDS.ReplyCom.handler(message);
       }
       this.saveMessage(message);
-    } catch {
+    } catch (ex) {
+      console.log(ex);
     }
-  }
+  };
 
   async handle(message: Message): Promise<Message | Message[]> {
-    if(this.middleFingerRemover.handleMessage(message)) { return; }
+    if (this.middleFingerRemover.handleMessage(message)) {
+      return;
+    }
     this.processMessage(message);
   }
 }

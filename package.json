@@ -1,28 +1,36 @@
 {
-   "name": "exiletf2",
-   "version": "1.0.0",
-   "description": "invite demoman",
-   "main": "index.js",
-   "scripts": {
-      "start": "nodemon src/index.ts"
-   },
-   "keywords": [],
-   "author": "",
-   "license": "ISC",
-   "dependencies": {
-      "discord.js": "^12.5.3",
-      "dotenv": "^9.0.2",
-      "inversify": "^5.1.1",
-      "mysql": "^2.14.1",
-      "nodemon": "^2.0.7",
-      "reflect-metadata": "^0.1.13",
-      "typedi": "^0.10.0",
-      "typeorm": "0.2.32",
-      "typeorm-typedi-extensions": "^0.4.1"
-   },
-   "devDependencies": {
-      "@types/node": "^8.0.29",
-      "ts-node": "^3.3.0",
-      "typescript": "3.3.3333"
-   }
+  "name": "exiletf2",
+  "version": "1.0.0",
+  "description": "invite demoman",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "nodemon index.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "start": "ts-node index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.5.3",
+    "dotenv": "^9.0.2",
+    "inversify": "^5.1.1",
+    "mysql2": "^2.2.5",
+    "nodemon": "^2.0.7",
+    "reflect-metadata": "^0.1.13",
+    "typedi": "^0.10.0",
+    "typeorm": "0.2.32",
+    "typeorm-typedi-extensions": "^0.4.1",
+    "ts-node": "^3.3.0",
+    "typescript": "3.3.3333",
+    "@types/node": "^8.0.29"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.23.0",
+    "@typescript-eslint/parser": "^4.23.0",
+    "eslint": "^7.26.0",
+    "eslint-config-google": "^0.14.0",
+    "prettier": "2.3.0"
+  }
 }

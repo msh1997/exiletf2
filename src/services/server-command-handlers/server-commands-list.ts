@@ -1,14 +1,14 @@
 export const COMMANDS: any = {
   AddCom: {
-    value: "!addcom"
+    value: "!addcom",
   },
   DelCom: {
-    value: "!delcom"
+    value: "!delcom",
   },
   ReplyCom: {
-    save: true
+    save: true,
   },
   MsgCount: {
-    value: "!msgcount"
-  }
-}
+    value: "!msgcount",
+  },
+};
