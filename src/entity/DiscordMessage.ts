@@ -4,7 +4,10 @@ import {
   Column,
   CreateDateColumn,
   BaseEntity,
+  OneToMany,
+  JoinTable,
 } from "typeorm";
+import { DiscordMessageAttachment } from "./DiscordMessageAttachment";
 
 @Entity("discord_message")
 export class DiscordMessage extends BaseEntity {
@@ -20,6 +23,13 @@ export class DiscordMessage extends BaseEntity {
 
   @Column()
   channel: string;
+
+  @OneToMany(
+    () => DiscordMessageAttachment,
+    (attachment) => attachment.message,
+    { cascade: true }
+  )
+  attachments: DiscordMessageAttachment[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -17,9 +17,8 @@ export class CommandsService {
   constructor(@inject(TYPES.DBManager) manager: DBManager) {
     this.DBManager = manager;
     this.DBManager.register(async (dbmanager) => {
-      this.commandsRepository = dbmanager.commandsRepository;
+      this.commandsRepository = dbmanager.getRepository(Command);
       const commands = await this.commandsRepository.find();
-
       commands.forEach((command) => this.addToHash(command));
     });
   }

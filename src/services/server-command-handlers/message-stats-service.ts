@@ -3,6 +3,7 @@ import { inject, injectable } from "inversify";
 import { Like, Repository } from "typeorm";
 import { DBManager } from "../../db";
 import { DiscordMessage } from "../../entity/DiscordMessage";
+import { DiscordMessageAttachment } from "../../entity/DiscordMessageAttachment";
 import { TYPES } from "../../types";
 import { CommandHandler, Handle } from "./server-commands-config";
 import { COMMANDS } from "./server-commands-list";
@@ -16,7 +17,7 @@ export class MessageStatsService {
   constructor(@inject(TYPES.DBManager) manager: DBManager) {
     this.DBManager = manager;
     this.DBManager.register(async (dbmanager) => {
-      this.messageRepository = dbmanager.messageRepository;
+      this.messageRepository = dbmanager.getRepository(DiscordMessage);
     });
   }
 
@@ -34,8 +35,15 @@ export class MessageStatsService {
         content: Like(`%${messageMatcher}%`),
       },
     });
+    const test = await this.messageRepository.find({
+      where: {
+        sender: "111691572084510720",
+        content: Like(`%${messageMatcher}%`),
+      },
+      relations: ["attachments"],
+    });
     messageCount.set(user.id, response);
-    console.log(response);
+    console.log(test[0]);
     return messageCount.get(user.id);
   };
 

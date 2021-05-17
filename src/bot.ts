@@ -19,7 +19,7 @@ export class Bot {
     this.messageHandler = messageResponder;
   }
 
-  public listen(): Promise<string> {
+  public listen = (): Promise<string> => {
     this.client.on("message", async (message: Message) => {
       if (message.author.bot) {
         console.log("Ignoring bot message!");
@@ -34,5 +34,5 @@ export class Bot {
     });
 
     return this.client.login(this.token);
-  }
+  };
 }

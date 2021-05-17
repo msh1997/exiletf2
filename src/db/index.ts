@@ -1,14 +1,14 @@
 import { injectable } from "inversify";
-import { createConnection, Repository } from "typeorm";
+import { EntityTarget } from "typeorm";
+import { Connection, createConnection, Repository } from "typeorm";
 import { Command } from "../entity/Command";
 import { DiscordMessage } from "../entity/DiscordMessage";
 
 @injectable()
 export class DBManager {
-  public messageRepository: Repository<DiscordMessage>;
-  public commandsRepository: Repository<Command>;
   private callbacks: Function[] = [];
   private isInitialized = false;
+  private connection: Connection;
 
   constructor() {
     createConnection({
@@ -16,10 +16,10 @@ export class DBManager {
       url: process.env.TYPEORM_URL,
       charset: "utf8mb4",
       entities: process.env.TYPEORM_ENTITIES.split(","),
-      synchronize: process.env.TYPEORM_SYNCHRONIZE == "true",
+      synchronize: true,
+      logging: true,
     }).then((connection) => {
-      this.messageRepository = connection.getRepository(DiscordMessage);
-      this.commandsRepository = connection.getRepository(Command);
+      this.connection = connection;
       this.isInitialized = true;
       this.callbacks.forEach((callback) => {
         callback(this);
@@ -27,11 +27,17 @@ export class DBManager {
     });
   }
 
-  public register(callback: Function) {
+  public register = (callback: Function) => {
     if (this.isInitialized) {
       callback();
     } else {
       this.callbacks.push(callback);
     }
-  }
+  };
+
+  public getRepository = <Entity>(
+    entity: EntityTarget<Entity>
+  ): Repository<Entity> => {
+    return this.connection.getRepository(entity);
+  };
 }
