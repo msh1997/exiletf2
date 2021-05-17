@@ -7,7 +7,9 @@
     "dev": "nodemon index.ts",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "start": "ts-node index.ts"
+    "start": "ts-node index.ts",
+    "prepare": "husky install",
+    "prettier": "prettier --write ."
   },
   "keywords": [],
   "author": "",
@@ -31,6 +33,14 @@
     "@typescript-eslint/parser": "^4.23.0",
     "eslint": "^7.26.0",
     "eslint-config-google": "^0.14.0",
+    "husky": "^6.0.0",
+    "lint-staged": "^11.0.0",
+    "mrm": "^3.0.1",
+    "mrm-task-lint-staged": "^6.0.0",
     "prettier": "2.3.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": "eslint --cache --fix",
+    "*.{js,jsx,json,ts,tsx,html}": "prettier --write"
   }
 }

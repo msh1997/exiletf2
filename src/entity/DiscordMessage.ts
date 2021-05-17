@@ -11,11 +11,9 @@ export class DiscordMessage extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  content: string;
+  @Column() content: string;
 
-  @Column()
-  sender: string;
+  @Column() sender: string;
 
   @Column()
   guild: string;
