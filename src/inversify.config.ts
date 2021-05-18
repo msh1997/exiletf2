@@ -8,6 +8,7 @@ import { DBManager } from "./db";
 import { MiddleFingerRemover } from "./services/middle-finger-remover";
 import { CommandsService } from "./services/server-command-handlers/custom-commands-service";
 import { MessageStatsService } from "./services/server-command-handlers/message-stats-service";
+import { ChannelPermissionsService } from "./services/server-command-handlers/channel-permissions-service";
 
 const container = new Container();
 
@@ -33,6 +34,10 @@ container
 container
   .bind<MessageStatsService>(TYPES.MessageStatsService)
   .to(MessageStatsService)
+  .inSingletonScope();
+container
+  .bind<ChannelPermissionsService>(TYPES.ChannelPermissionsService)
+  .to(ChannelPermissionsService)
   .inSingletonScope();
 
 export default container;

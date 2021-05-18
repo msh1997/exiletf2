@@ -5,6 +5,7 @@ import { DBManager } from "../../db";
 import { DiscordMessage } from "../../entity/DiscordMessage";
 import { DiscordMessageAttachment } from "../../entity/DiscordMessageAttachment";
 import { TYPES } from "../../types";
+import { MessageResponse } from "../message-handler";
 import { CommandHandler, Handle } from "./server-commands-config";
 import { COMMANDS } from "./server-commands-list";
 
@@ -48,7 +49,9 @@ export class MessageStatsService {
   };
 
   @Handle(COMMANDS.MsgCount)
-  public handleMessageCountRequest = async (message: Message) => {
-    message.channel.send(await this.getMessageCount(message));
+  public handleMessageCountRequest = async (
+    message: Message
+  ): Promise<MessageResponse> => {
+    return new MessageResponse(await this.getMessageCount(message), false);
   };
 }

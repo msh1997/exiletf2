@@ -7,21 +7,21 @@ import {
 } from "typeorm";
 
 @Entity()
-export class Command extends BaseEntity {
+export class ChannelPermissions extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Column()
-  commandName: string;
-
-  @Column()
-  response: string;
 
   @Column()
   guild: string;
 
   @Column()
-  reply: boolean;
+  channel: string;
+
+  @Column()
+  canSend: boolean;
+
+  @Column()
+  canEdit: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

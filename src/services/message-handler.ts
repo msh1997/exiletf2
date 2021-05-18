@@ -1,4 +1,4 @@
-import { Collection, Message, MessageAttachment } from "discord.js";
+import { Channel, Collection, Message, MessageAttachment } from "discord.js";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import { DiscordMessage } from "../entity/DiscordMessage";
@@ -10,6 +10,7 @@ import { CommandsService } from "./server-command-handlers/custom-commands-servi
 import { COMMANDS } from "./server-command-handlers/server-commands-list";
 import { DiscordMessageAttachment } from "../entity/DiscordMessageAttachment";
 import { MessageStatsService } from "./server-command-handlers/message-stats-service";
+import { ChannelPermissionsService } from "./server-command-handlers/channel-permissions-service";
 
 @injectable()
 @Service()
@@ -18,16 +19,20 @@ export class MessageHandler {
   private commandsService: CommandsService;
   private messageRepository: Repository<DiscordMessage>;
   private manager: DBManager;
+  private channelPermissionsService: ChannelPermissionsService;
 
   constructor(
     @inject(TYPES.DBManager) manager: DBManager,
     @inject(TYPES.MiddleFingerRemover) middleFingerRemover: MiddleFingerRemover,
     @inject(TYPES.CommandsService) commandsService: CommandsService,
-    @inject(TYPES.MessageStatsService) messageStatsService: MessageStatsService
+    @inject(TYPES.MessageStatsService) messageStatsService: MessageStatsService,
+    @inject(TYPES.ChannelPermissionsService)
+      channelPermissionsService: ChannelPermissionsService
   ) {
     this.manager = manager;
     this.middleFingerRemover = middleFingerRemover;
     this.commandsService = commandsService;
+    this.channelPermissionsService = channelPermissionsService;
     this.manager.register((dbmanager) => {
       this.messageRepository = dbmanager.getRepository(DiscordMessage);
     });
@@ -57,19 +62,30 @@ export class MessageHandler {
     await this.messageRepository.save(discordMessage);
   };
 
-  private processMessage = (message: Message): void => {
+  private sendMessage = (
+    messageResponse: MessageResponse,
+    message: Message
+  ) => {
+    if (!this.channelPermissionsService.canSend(message)) return;
+    if (messageResponse.reply) message.reply(messageResponse.content);
+    else message.channel.send(messageResponse.content);
+  };
+
+  private processMessage = async (message: Message): Promise<void> => {
     try {
       const commandStr = message.content.split(" ")[0].trim();
       for (const command in COMMANDS) {
         if (COMMANDS[command].value === commandStr) {
           console.log(COMMANDS);
-          COMMANDS[command].handler(message);
+          const messageResponse = await COMMANDS[command].handler(message);
+          this.sendMessage(messageResponse, message);
           if (COMMANDS[command].save) this.saveMessage(message);
           return;
         }
       }
       if (this.commandsService.isCommand(message)) {
-        COMMANDS.ReplyCom.handler(message);
+        const messageResponse = await COMMANDS.ReplyCom.handler(message);
+        this.sendMessage(messageResponse, message);
       }
       this.saveMessage(message);
     } catch (ex) {
@@ -83,4 +99,14 @@ export class MessageHandler {
     }
     this.processMessage(message);
   };
+}
+
+export class MessageResponse {
+  public content: string | number;
+  public reply: boolean;
+
+  constructor(content: string | number, reply: boolean) {
+    this.content = content;
+    this.reply = reply;
+  }
 }

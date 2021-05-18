@@ -4,6 +4,7 @@ import { Repository } from "typeorm";
 import { DBManager } from "../../db";
 import { Command } from "../../entity/Command";
 import { TYPES } from "../../types";
+import { MessageResponse } from "../message-handler";
 import { CommandHandler, Handle } from "./server-commands-config";
 import { COMMANDS } from "./server-commands-list";
 
@@ -34,7 +35,7 @@ export class CommandsService {
   };
 
   @Handle(COMMANDS.AddCom)
-  public addCom = async (message: Message) => {
+  public addCom = async (message: Message): Promise<MessageResponse> => {
     const spcSplit = message.content.split("\"");
     const command = new Command();
 
@@ -49,21 +50,22 @@ export class CommandsService {
     if (existingCommand.length === 0) {
       this.addToHash(command);
       await this.commandsRepository.save(command);
-      message.channel.send("Command has been added");
+      return new MessageResponse("Command has been added", false);
     } else {
-      message.channel.send("Command already exists");
+      return new MessageResponse("Command already exists", false);
     }
   };
 
   @Handle(COMMANDS.DelCom)
-  private delCom = async (message: Message) => {
+  private delCom = async (message: Message): Promise<MessageResponse> => {
     const spcSplit = message.content.split("\"");
     console.log(spcSplit[1]);
     const deleteResult = await this.commandsRepository.delete({
       commandName: spcSplit[1],
     });
-    if (deleteResult.affected == 0) message.channel.send("No commands deleted");
-    else message.channel.send("Command deleted");
+    if (deleteResult.affected == 0)
+      return new MessageResponse("No commands deleted", false);
+    else return new MessageResponse("Command deleted", false);
   };
 
   private addToHash = (command: Command) => {
@@ -87,12 +89,12 @@ export class CommandsService {
   };
 
   @Handle(COMMANDS.ReplyCom)
-  public replyCommand = (message: Message) => {
+  public replyCommand = (message: Message): Promise<MessageResponse> => {
     const command = this.commandsMap.get(message.guild.id).get(message.content);
     if (command.reply) {
-      message.reply(command.response);
+      return Promise.resolve(new MessageResponse(command.response, true));
     } else {
-      message.channel.send(command.response);
+      return Promise.resolve(new MessageResponse(command.response, false));
     }
   };
 }

@@ -8,4 +8,5 @@ export const TYPES = {
   MiddleFingerRemover: Symbol("MiddleFingerRemover"),
   CommandsService: Symbol("CommandsService"),
   MessageStatsService: Symbol("MessageStatsService"),
+  ChannelPermissionsService: Symbol("ChannelPermissionsService"),
 };

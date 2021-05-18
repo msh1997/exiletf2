@@ -11,4 +11,7 @@ export const COMMANDS: any = {
   MsgCount: {
     value: "!msgcount",
   },
+  SetChannelPerm: {
+    value: "!setchannelperm",
+  },
 };
