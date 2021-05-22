@@ -24,11 +24,7 @@ export class DiscordMessage extends BaseEntity {
   @Column()
   channel: string;
 
-  @OneToMany(
-    () => DiscordMessageAttachment,
-    (attachment) => attachment.message,
-    { cascade: true }
-  )
+  @OneToMany(() => DiscordMessageAttachment, attachment => attachment.message, { cascade: true })
   attachments: DiscordMessageAttachment[];
 
   @CreateDateColumn()

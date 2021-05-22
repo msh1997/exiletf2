@@ -15,18 +15,15 @@ export class ChannelPermissionsService {
   private permissionsHash = new Map();
 
   constructor(@inject(TYPES.DBManager) dbManager: DBManager) {
-    dbManager.register(async (dbManager) => {
-      this.channelPermissionsRepository =
-        dbManager.getRepository(ChannelPermissions);
+    dbManager.register(async dbManager => {
+      this.channelPermissionsRepository = dbManager.getRepository(ChannelPermissions);
       const permissions = await this.channelPermissionsRepository.find();
-      permissions.forEach((permission) => this.updateChannelPerms(permission));
+      permissions.forEach(permission => this.updateChannelPerms(permission));
     });
   }
 
   @Handle(COMMANDS.SetChannelPerm)
-  public handleSetChannelPermRequest = async (
-    message: Message
-  ): Promise<MessageResponse> => {
+  public handleSetChannelPermRequest = async (message: Message): Promise<MessageResponse> => {
     let permissions = message.content.split(" ")[1];
     if (!permissions) permissions = "";
     const existingPerms = await this.channelPermissionsRepository.findOne({
@@ -46,9 +43,7 @@ export class ChannelPermissionsService {
       this.channelPermissionsRepository.save(existingPerms);
       this.updateChannelPerms(existingPerms);
     }
-    return Promise.resolve(
-      new MessageResponse("Permissions set successfully.", false)
-    );
+    return Promise.resolve(new MessageResponse("Permissions set successfully.", false));
   };
 
   public updateChannelPerms = (channelPermissions: ChannelPermissions) => {

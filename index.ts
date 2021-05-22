@@ -10,6 +10,6 @@ bot
   .then(() => {
     console.log("Logged in!");
   })
-  .catch((error) => {
+  .catch(error => {
     console.log("Oh no! ", error);
   });

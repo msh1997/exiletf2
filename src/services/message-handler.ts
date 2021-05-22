@@ -1,4 +1,4 @@
-import { Channel, Collection, Message, MessageAttachment } from "discord.js";
+import { Channel, Collection, Message, MessageAttachment, MessageEmbed } from "discord.js";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import { DiscordMessage } from "../entity/DiscordMessage";
@@ -11,6 +11,8 @@ import { COMMANDS } from "./server-command-handlers/server-commands-list";
 import { DiscordMessageAttachment } from "../entity/DiscordMessageAttachment";
 import { MessageStatsService } from "./server-command-handlers/message-stats-service";
 import { ChannelPermissionsService } from "./server-command-handlers/channel-permissions-service";
+import { title } from "process";
+import { ServerImageService } from "./server-command-handlers/server-image-service";
 
 @injectable()
 @Service()
@@ -20,6 +22,7 @@ export class MessageHandler {
   private messageRepository: Repository<DiscordMessage>;
   private manager: DBManager;
   private channelPermissionsService: ChannelPermissionsService;
+  private serverImageService: ServerImageService;
 
   constructor(
     @inject(TYPES.DBManager) manager: DBManager,
@@ -27,13 +30,14 @@ export class MessageHandler {
     @inject(TYPES.CommandsService) commandsService: CommandsService,
     @inject(TYPES.MessageStatsService) messageStatsService: MessageStatsService,
     @inject(TYPES.ChannelPermissionsService)
-      channelPermissionsService: ChannelPermissionsService
+      channelPermissionsService: ChannelPermissionsService,
+    @inject(TYPES.ServerImageService) serverImageSerice: ServerImageService
   ) {
     this.manager = manager;
     this.middleFingerRemover = middleFingerRemover;
     this.commandsService = commandsService;
     this.channelPermissionsService = channelPermissionsService;
-    this.manager.register((dbmanager) => {
+    this.manager.register(dbmanager => {
       this.messageRepository = dbmanager.getRepository(DiscordMessage);
     });
   }
@@ -63,12 +67,19 @@ export class MessageHandler {
   };
 
   private sendMessage = (
-    messageResponse: MessageResponse,
+    messageResponse: MessageResponse | MessageEmbedResponse[],
     message: Message
   ) => {
     if (!this.channelPermissionsService.canSend(message)) return;
-    if (messageResponse.reply) message.reply(messageResponse.content);
-    else message.channel.send(messageResponse.content);
+    if (messageResponse instanceof MessageResponse) {
+      if (messageResponse.reply) message.reply(messageResponse.content);
+      else message.channel.send(messageResponse.content);
+    } else {
+      messageResponse.forEach(response => {
+        if (response.reply) message.reply(response.embed);
+        else message.channel.send(response.embed);
+      });
+    }
   };
 
   private processMessage = async (message: Message): Promise<void> => {
@@ -87,6 +98,7 @@ export class MessageHandler {
         const messageResponse = await COMMANDS.ReplyCom.handler(message);
         this.sendMessage(messageResponse, message);
       }
+
       this.saveMessage(message);
     } catch (ex) {
       console.log(ex);
@@ -108,5 +120,15 @@ export class MessageResponse {
   constructor(content: string | number, reply: boolean) {
     this.content = content;
     this.reply = reply;
+  }
+}
+
+export class MessageEmbedResponse {
+  public embed: MessageEmbed;
+  public reply: boolean;
+
+  constructor(embed: MessageEmbed, reply: boolean) {
+    this.reply = reply;
+    this.embed = embed;
   }
 }

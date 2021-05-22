@@ -23,7 +23,7 @@ export class DiscordMessageAttachment extends BaseEntity {
   @Column()
   size: number;
 
-  @ManyToOne(() => DiscordMessage, (message) => message.attachments)
+  @ManyToOne(() => DiscordMessage, message => message.attachments)
   message: DiscordMessage;
 
   @CreateDateColumn()

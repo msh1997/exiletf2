@@ -9,4 +9,5 @@ export const TYPES = {
   CommandsService: Symbol("CommandsService"),
   MessageStatsService: Symbol("MessageStatsService"),
   ChannelPermissionsService: Symbol("ChannelPermissionsService"),
+  ServerImageService: Symbol("ServerImageService"),
 };

@@ -17,7 +17,7 @@ export class MessageStatsService {
 
   constructor(@inject(TYPES.DBManager) manager: DBManager) {
     this.DBManager = manager;
-    this.DBManager.register(async (dbmanager) => {
+    this.DBManager.register(async dbmanager => {
       this.messageRepository = dbmanager.getRepository(DiscordMessage);
     });
   }
@@ -49,9 +49,7 @@ export class MessageStatsService {
   };
 
   @Handle(COMMANDS.MsgCount)
-  public handleMessageCountRequest = async (
-    message: Message
-  ): Promise<MessageResponse> => {
+  public handleMessageCountRequest = async (message: Message): Promise<MessageResponse> => {
     return new MessageResponse(await this.getMessageCount(message), false);
   };
 }

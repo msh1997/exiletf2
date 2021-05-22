@@ -8,39 +8,28 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "start": "ts-node index.ts",
-    "prepare": "husky install",
     "prettier": "prettier --write ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/node": "^8.0.29",
+    "axios": "^0.21.1",
+    "danbooru": "^3.1.0",
     "discord.js": "^12.5.3",
     "dotenv": "^9.0.2",
     "inversify": "^5.1.1",
     "mysql2": "^2.2.5",
-    "nodemon": "^2.0.7",
     "reflect-metadata": "^0.1.13",
+    "ts-node": "^3.3.0",
     "typedi": "^0.10.0",
     "typeorm": "0.2.32",
     "typeorm-typedi-extensions": "^0.4.1",
-    "ts-node": "^3.3.0",
-    "typescript": "3.3.3333",
-    "@types/node": "^8.0.29"
+    "typescript": "3.3.3333"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.23.0",
-    "@typescript-eslint/parser": "^4.23.0",
-    "eslint": "^7.26.0",
-    "eslint-config-google": "^0.14.0",
-    "husky": "^6.0.0",
-    "lint-staged": "^11.0.0",
-    "mrm": "^3.0.1",
-    "mrm-task-lint-staged": "^6.0.0",
+    "nodemon": "^2.0.7",
     "prettier": "2.3.0"
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": "eslint --cache --fix",
-    "*.{js,jsx,json,ts,tsx,html}": "prettier --write"
   }
 }

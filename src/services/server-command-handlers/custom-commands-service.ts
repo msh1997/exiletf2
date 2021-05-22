@@ -17,10 +17,10 @@ export class CommandsService {
 
   constructor(@inject(TYPES.DBManager) manager: DBManager) {
     this.DBManager = manager;
-    this.DBManager.register(async (dbmanager) => {
+    this.DBManager.register(async dbmanager => {
       this.commandsRepository = dbmanager.getRepository(Command);
       const commands = await this.commandsRepository.find();
-      commands.forEach((command) => this.addToHash(command));
+      commands.forEach(command => this.addToHash(command));
     });
   }
 
@@ -63,8 +63,7 @@ export class CommandsService {
     const deleteResult = await this.commandsRepository.delete({
       commandName: spcSplit[1],
     });
-    if (deleteResult.affected == 0)
-      return new MessageResponse("No commands deleted", false);
+    if (deleteResult.affected == 0) return new MessageResponse("No commands deleted", false);
     else return new MessageResponse("Command deleted", false);
   };
 

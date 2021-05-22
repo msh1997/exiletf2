@@ -17,11 +17,10 @@ export class DBManager {
       charset: "utf8mb4",
       entities: process.env.TYPEORM_ENTITIES.split(","),
       synchronize: true,
-      logging: true,
-    }).then((connection) => {
+    }).then(connection => {
       this.connection = connection;
       this.isInitialized = true;
-      this.callbacks.forEach((callback) => {
+      this.callbacks.forEach(callback => {
         callback(this);
       });
     });
@@ -35,9 +34,7 @@ export class DBManager {
     }
   };
 
-  public getRepository = <Entity>(
-    entity: EntityTarget<Entity>
-  ): Repository<Entity> => {
+  public getRepository = <Entity>(entity: EntityTarget<Entity>): Repository<Entity> => {
     return this.connection.getRepository(entity);
   };
 }

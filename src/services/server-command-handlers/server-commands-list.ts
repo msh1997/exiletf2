@@ -14,4 +14,20 @@ export const COMMANDS: any = {
   SetChannelPerm: {
     value: "!setchannelperm",
   },
+  DanbooruImage: {
+    value: "!dimg",
+    save: true,
+  },
+  SankakuImage: {
+    value: "!simg",
+    save: true,
+  },
+  DanbooruImageBomb: {
+    value: "!dimgbomb",
+    save: true,
+  },
+  SankakuImageBomb: {
+    value: "!simgbomb",
+    save: true,
+  },
 };
