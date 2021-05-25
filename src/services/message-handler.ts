@@ -1,4 +1,5 @@
-import { Channel, Collection, Message, MessageAttachment, MessageEmbed } from "discord.js";
+/*eslint-disable indent, @typescript-eslint/no-unused-vars*/
+import { Message, MessageAttachment, MessageEmbed } from "discord.js";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import { DiscordMessage } from "../entity/DiscordMessage";
@@ -11,7 +12,6 @@ import { COMMANDS } from "./server-command-handlers/server-commands-list";
 import { DiscordMessageAttachment } from "../entity/DiscordMessageAttachment";
 import { MessageStatsService } from "./server-command-handlers/message-stats-service";
 import { ChannelPermissionsService } from "./server-command-handlers/channel-permissions-service";
-import { title } from "process";
 import { ServerImageService } from "./server-command-handlers/server-image-service";
 
 @injectable()
@@ -30,7 +30,7 @@ export class MessageHandler {
     @inject(TYPES.CommandsService) commandsService: CommandsService,
     @inject(TYPES.MessageStatsService) messageStatsService: MessageStatsService,
     @inject(TYPES.ChannelPermissionsService)
-      channelPermissionsService: ChannelPermissionsService,
+    channelPermissionsService: ChannelPermissionsService,
     @inject(TYPES.ServerImageService) serverImageSerice: ServerImageService
   ) {
     this.manager = manager;
@@ -85,17 +85,14 @@ export class MessageHandler {
   private processMessage = async (message: Message): Promise<void> => {
     try {
       const commandStr = message.content.split(" ")[0].trim();
-      for (const command in COMMANDS) {
-        if (COMMANDS[command].value === commandStr) {
-          console.log(COMMANDS);
-          const messageResponse = await COMMANDS[command].handler(message);
-          this.sendMessage(messageResponse, message);
-          if (COMMANDS[command].save) this.saveMessage(message);
-          return;
-        }
+      if (COMMANDS[commandStr] != undefined) {
+        const messageResponse = await COMMANDS[commandStr].handler(message);
+        this.sendMessage(messageResponse, message);
+        if (COMMANDS[commandStr].save) this.saveMessage(message);
+        return;
       }
       if (this.commandsService.isCommand(message)) {
-        const messageResponse = await COMMANDS.ReplyCom.handler(message);
+        const messageResponse = await COMMANDS["ReplyCom"].handler(message);
         this.sendMessage(messageResponse, message);
       }
 

@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 module.exports = {
   arrowParens: "avoid",
   bracketSpacing: true,
@@ -13,4 +14,5 @@ module.exports = {
   tabWidth: 2,
   trailingComma: "es5",
   useTabs: false,
+  endOfLine: "crlf",
 };

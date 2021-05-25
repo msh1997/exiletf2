@@ -1,3 +1,4 @@
+/*eslint-disable quotes*/
 import { Message } from "discord.js";
 import { inject, injectable } from "inversify";
 import { Repository } from "typeorm";
@@ -6,7 +7,6 @@ import { Command } from "../../entity/Command";
 import { TYPES } from "../../types";
 import { MessageResponse } from "../message-handler";
 import { CommandHandler, Handle } from "./server-commands-config";
-import { COMMANDS } from "./server-commands-list";
 
 @CommandHandler
 @injectable()
@@ -34,9 +34,9 @@ export class CommandsService {
     return spcSplit[0] === "!delcom";
   };
 
-  @Handle(COMMANDS.AddCom)
+  @Handle("!addcom")
   public addCom = async (message: Message): Promise<MessageResponse> => {
-    const spcSplit = message.content.split("\"");
+    const spcSplit = message.content.split('"');
     const command = new Command();
 
     command.commandName = spcSplit[1].trim();
@@ -56,9 +56,9 @@ export class CommandsService {
     }
   };
 
-  @Handle(COMMANDS.DelCom)
+  @Handle("!delcom")
   private delCom = async (message: Message): Promise<MessageResponse> => {
-    const spcSplit = message.content.split("\"");
+    const spcSplit = message.content.split('"');
     console.log(spcSplit[1]);
     const deleteResult = await this.commandsRepository.delete({
       commandName: spcSplit[1],
@@ -87,7 +87,7 @@ export class CommandsService {
     );
   };
 
-  @Handle(COMMANDS.ReplyCom)
+  @Handle("ReplyCom")
   public replyCommand = (message: Message): Promise<MessageResponse> => {
     const command = this.commandsMap.get(message.guild.id).get(message.content);
     if (command.reply) {

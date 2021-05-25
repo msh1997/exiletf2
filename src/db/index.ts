@@ -1,8 +1,6 @@
 import { injectable } from "inversify";
 import { EntityTarget } from "typeorm";
 import { Connection, createConnection, Repository } from "typeorm";
-import { Command } from "../entity/Command";
-import { DiscordMessage } from "../entity/DiscordMessage";
 
 @injectable()
 export class DBManager {

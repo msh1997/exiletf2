@@ -5,7 +5,6 @@ import {
   CreateDateColumn,
   BaseEntity,
   OneToMany,
-  JoinTable,
 } from "typeorm";
 import { DiscordMessageAttachment } from "./DiscordMessageAttachment";
 

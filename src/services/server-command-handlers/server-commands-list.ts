@@ -1,33 +1,37 @@
 export const COMMANDS: any = {
-  AddCom: {
+  "!addcom": {
     value: "!addcom",
   },
-  DelCom: {
+  "!delcom": {
     value: "!delcom",
   },
   ReplyCom: {
     save: true,
   },
-  MsgCount: {
+  "!msgcount": {
     value: "!msgcount",
   },
-  SetChannelPerm: {
+  "!setchannelperm": {
     value: "!setchannelperm",
   },
-  DanbooruImage: {
+  "!dimg": {
     value: "!dimg",
     save: true,
   },
-  SankakuImage: {
+  "!simg": {
     value: "!simg",
     save: true,
   },
-  DanbooruImageBomb: {
+  "!dimgbomb": {
     value: "!dimgbomb",
     save: true,
   },
-  SankakuImageBomb: {
+  "!simgbomb": {
     value: "!simgbomb",
+    save: true,
+  },
+  "!rimg": {
+    value: "!rimg",
     save: true,
   },
 };

@@ -1,9 +1,9 @@
+/*eslint-disable quotes*/
 import { Message } from "discord.js";
 import { inject, injectable } from "inversify";
 import { Like, Repository } from "typeorm";
 import { DBManager } from "../../db";
 import { DiscordMessage } from "../../entity/DiscordMessage";
-import { DiscordMessageAttachment } from "../../entity/DiscordMessageAttachment";
 import { TYPES } from "../../types";
 import { MessageResponse } from "../message-handler";
 import { CommandHandler, Handle } from "./server-commands-config";
@@ -28,7 +28,7 @@ export class MessageStatsService {
 
   public getMessageCount = async (message: Message): Promise<number> => {
     const messageCount = new Map();
-    const messageMatcher = message.content.split("\"")[1];
+    const messageMatcher = message.content.split('"')[1];
     const user = (message.mentions.users as any).first();
     const response = await this.messageRepository.count({
       where: {
