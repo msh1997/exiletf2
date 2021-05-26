@@ -1,4 +1,4 @@
-/*eslint-disable quotes*/
+/*eslint-disable quotes, indent*/
 import { Message } from "discord.js";
 import { inject, injectable } from "inversify";
 import { Like, Repository } from "typeorm";
@@ -7,7 +7,6 @@ import { DiscordMessage } from "../../entity/DiscordMessage";
 import { TYPES } from "../../types";
 import { MessageResponse } from "../message-handler";
 import { CommandHandler, Handle } from "./server-commands-config";
-import { COMMANDS } from "./server-commands-list";
 
 @CommandHandler
 @injectable()
@@ -27,25 +26,23 @@ export class MessageStatsService {
   };
 
   public getMessageCount = async (message: Message): Promise<number> => {
-    const messageCount = new Map();
     const messageMatcher = message.content.split('"')[1];
     const user = (message.mentions.users as any).first();
-    const response = await this.messageRepository.count({
-      where: {
-        sender: user.id,
-        content: Like(`%${messageMatcher}%`),
-      },
-    });
-    const test = await this.messageRepository.find({
-      where: {
-        sender: "111691572084510720",
-        content: Like(`%${messageMatcher}%`),
-      },
-      relations: ["attachments"],
-    });
-    messageCount.set(user.id, response);
-    console.log(test[0]);
-    return messageCount.get(user.id);
+    console.log(this.messageRepository);
+    const response = user
+      ? await this.messageRepository.count({
+          where: {
+            sender: user.id,
+            content: Like(`%${messageMatcher}%`),
+          },
+        })
+      : await this.messageRepository.count({
+          where: {
+            content: Like(`%${messageMatcher}%`),
+          },
+        });
+    console.log(response);
+    return response;
   };
 
   @Handle("!msgcount")
