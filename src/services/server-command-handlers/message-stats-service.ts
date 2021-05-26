@@ -26,9 +26,11 @@ export class MessageStatsService {
   };
 
   public getMessageCount = async (message: Message): Promise<number> => {
-    const messageMatcher = message.content.split('"')[1];
     const user = (message.mentions.users as any).first();
-    console.log(this.messageRepository);
+    const messageMatcher = message.content
+      .split(" ")
+      .slice(user !== undefined ? 2 : 1)
+      .join(" ");
     const response = user
       ? await this.messageRepository.count({
           where: {
