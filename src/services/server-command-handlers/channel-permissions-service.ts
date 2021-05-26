@@ -6,7 +6,6 @@ import { ChannelPermissions } from "../../entity/ChannelPermissions";
 import { TYPES } from "../../types";
 import { MessageResponse } from "../message-handler";
 import { CommandHandler, Handle } from "./server-commands-config";
-import { COMMANDS } from "./server-commands-list";
 
 @CommandHandler
 @injectable()
@@ -22,7 +21,7 @@ export class ChannelPermissionsService {
     });
   }
 
-  @Handle(COMMANDS.SetChannelPerm)
+  @Handle("!setchannelperm")
   public handleSetChannelPermRequest = async (message: Message): Promise<MessageResponse> => {
     let permissions = message.content.split(" ")[1];
     if (!permissions) permissions = "";

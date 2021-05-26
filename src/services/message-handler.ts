@@ -23,6 +23,7 @@ export class MessageHandler {
   private manager: DBManager;
   private channelPermissionsService: ChannelPermissionsService;
   private serverImageService: ServerImageService;
+  private messageStatsService: MessageStatsService;
 
   constructor(
     @inject(TYPES.DBManager) manager: DBManager,
@@ -37,6 +38,8 @@ export class MessageHandler {
     this.middleFingerRemover = middleFingerRemover;
     this.commandsService = commandsService;
     this.channelPermissionsService = channelPermissionsService;
+    this.messageStatsService = messageStatsService;
+    this.serverImageService = serverImageSerice;
     this.manager.register(dbmanager => {
       this.messageRepository = dbmanager.getRepository(DiscordMessage);
     });

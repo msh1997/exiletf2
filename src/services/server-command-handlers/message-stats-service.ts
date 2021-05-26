@@ -48,7 +48,7 @@ export class MessageStatsService {
     return messageCount.get(user.id);
   };
 
-  @Handle(COMMANDS.MsgCount)
+  @Handle("!msgcount")
   public handleMessageCountRequest = async (message: Message): Promise<MessageResponse> => {
     return new MessageResponse(await this.getMessageCount(message), false);
   };
