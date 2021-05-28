@@ -10,6 +10,7 @@ import { CommandsService } from "./services/server-command-handlers/custom-comma
 import { MessageStatsService } from "./services/server-command-handlers/message-stats-service";
 import { ChannelPermissionsService } from "./services/server-command-handlers/channel-permissions-service";
 import { ServerImageService } from "./services/server-command-handlers/server-image-service";
+import { OsuReplayService } from "./services/server-command-handlers/osu-replay-service";
 
 const container = new Container();
 
@@ -36,5 +37,5 @@ container
   .bind<ServerImageService>(TYPES.ServerImageService)
   .to(ServerImageService)
   .inSingletonScope();
-
+container.bind<OsuReplayService>(TYPES.OsuReplayService).to(OsuReplayService).inSingletonScope();
 export default container;

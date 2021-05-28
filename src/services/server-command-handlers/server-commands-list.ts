@@ -34,4 +34,8 @@ export const COMMANDS: any = {
     value: "!rimg",
     save: true,
   },
+  "!ordr": {
+    value: "!ordr",
+    save: true,
+  },
 };

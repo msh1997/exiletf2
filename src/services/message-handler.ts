@@ -13,6 +13,7 @@ import { DiscordMessageAttachment } from "../entity/DiscordMessageAttachment";
 import { MessageStatsService } from "./server-command-handlers/message-stats-service";
 import { ChannelPermissionsService } from "./server-command-handlers/channel-permissions-service";
 import { ServerImageService } from "./server-command-handlers/server-image-service";
+import { OsuReplayService } from "./server-command-handlers/osu-replay-service";
 
 @injectable()
 @Service()
@@ -23,6 +24,8 @@ export class MessageHandler {
   private manager: DBManager;
   private channelPermissionsService: ChannelPermissionsService;
   private serverImageService: ServerImageService;
+  private messageStatsService: MessageStatsService;
+  private osuReplayService: OsuReplayService;
 
   constructor(
     @inject(TYPES.DBManager) manager: DBManager,
@@ -31,12 +34,16 @@ export class MessageHandler {
     @inject(TYPES.MessageStatsService) messageStatsService: MessageStatsService,
     @inject(TYPES.ChannelPermissionsService)
     channelPermissionsService: ChannelPermissionsService,
-    @inject(TYPES.ServerImageService) serverImageSerice: ServerImageService
+    @inject(TYPES.ServerImageService) serverImageService: ServerImageService,
+    @inject(TYPES.OsuReplayService) osuReplayService: OsuReplayService
   ) {
     this.manager = manager;
     this.middleFingerRemover = middleFingerRemover;
     this.commandsService = commandsService;
     this.channelPermissionsService = channelPermissionsService;
+    this.messageStatsService = messageStatsService;
+    this.serverImageService = serverImageService;
+    this.osuReplayService = osuReplayService;
     this.manager.register(dbmanager => {
       this.messageRepository = dbmanager.getRepository(DiscordMessage);
     });

@@ -10,4 +10,5 @@ export const TYPES = {
   MessageStatsService: Symbol("MessageStatsService"),
   ChannelPermissionsService: Symbol("ChannelPermissionsService"),
   ServerImageService: Symbol("ServerImageService"),
+  OsuReplayService: Symbol("OsuReplayService"),
 };
