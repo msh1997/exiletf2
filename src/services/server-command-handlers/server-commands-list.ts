@@ -34,4 +34,12 @@ export const COMMANDS: any = {
     value: "!rimg",
     save: true,
   },
+  "!wolfram": {
+    value: "!wolfram",
+    save: true,
+  },
+  "!help": {
+    value: "!help",
+    save: true,
+  },
 };

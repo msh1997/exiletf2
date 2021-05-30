@@ -10,6 +10,8 @@ import { CommandsService } from "./services/server-command-handlers/custom-comma
 import { MessageStatsService } from "./services/server-command-handlers/message-stats-service";
 import { ChannelPermissionsService } from "./services/server-command-handlers/channel-permissions-service";
 import { ServerImageService } from "./services/server-command-handlers/server-image-service";
+import { WolframQueryService } from "./services/server-command-handlers/wolfram-query-service";
+import { CommandsHelpService } from "./services/server-command-handlers/commands-help-service";
 
 const container = new Container();
 
@@ -35,6 +37,14 @@ container
 container
   .bind<ServerImageService>(TYPES.ServerImageService)
   .to(ServerImageService)
+  .inSingletonScope();
+container
+  .bind<WolframQueryService>(TYPES.WolframQueryService)
+  .to(WolframQueryService)
+  .inSingletonScope();
+container
+  .bind<CommandsHelpService>(TYPES.CommandsHelpService)
+  .to(CommandsHelpService)
   .inSingletonScope();
 
 export default container;

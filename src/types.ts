@@ -10,4 +10,6 @@ export const TYPES = {
   MessageStatsService: Symbol("MessageStatsService"),
   ChannelPermissionsService: Symbol("ChannelPermissionsService"),
   ServerImageService: Symbol("ServerImageService"),
+  WolframQueryService: Symbol("WolframQueryService"),
+  CommandsHelpService: Symbol("CommandsHelpService"),
 };

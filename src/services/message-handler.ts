@@ -13,6 +13,8 @@ import { DiscordMessageAttachment } from "../entity/DiscordMessageAttachment";
 import { MessageStatsService } from "./server-command-handlers/message-stats-service";
 import { ChannelPermissionsService } from "./server-command-handlers/channel-permissions-service";
 import { ServerImageService } from "./server-command-handlers/server-image-service";
+import { WolframQueryService } from "./server-command-handlers/wolfram-query-service";
+import { CommandsHelpService } from "./server-command-handlers/commands-help-service";
 
 @injectable()
 @Service()
@@ -24,6 +26,8 @@ export class MessageHandler {
   private channelPermissionsService: ChannelPermissionsService;
   private serverImageService: ServerImageService;
   private messageStatsService: MessageStatsService;
+  private wolframQueryService: WolframQueryService;
+  private commandsHelpService: CommandsHelpService;
 
   constructor(
     @inject(TYPES.DBManager) manager: DBManager,
@@ -32,7 +36,9 @@ export class MessageHandler {
     @inject(TYPES.MessageStatsService) messageStatsService: MessageStatsService,
     @inject(TYPES.ChannelPermissionsService)
     channelPermissionsService: ChannelPermissionsService,
-    @inject(TYPES.ServerImageService) serverImageSerice: ServerImageService
+    @inject(TYPES.ServerImageService) serverImageSerice: ServerImageService,
+    @inject(TYPES.WolframQueryService) wolframQueryService: WolframQueryService,
+    @inject(TYPES.CommandsHelpService) commandsHelpService: CommandsHelpService
   ) {
     this.manager = manager;
     this.middleFingerRemover = middleFingerRemover;
@@ -40,6 +46,8 @@ export class MessageHandler {
     this.channelPermissionsService = channelPermissionsService;
     this.messageStatsService = messageStatsService;
     this.serverImageService = serverImageSerice;
+    this.wolframQueryService = wolframQueryService;
+    this.commandsHelpService = commandsHelpService;
     this.manager.register(dbmanager => {
       this.messageRepository = dbmanager.getRepository(DiscordMessage);
     });
