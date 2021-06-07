@@ -42,4 +42,8 @@ export const COMMANDS: any = {
     value: "!help",
     save: true,
   },
+  "!gray": {
+    value: "!gray",
+    save: true,
+  },
 };

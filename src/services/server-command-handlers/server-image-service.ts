@@ -1,10 +1,11 @@
 /*eslint-disable indent*/
-import { Message, MessageEmbed } from "discord.js";
+import { Message, MessageAttachment, MessageEmbed } from "discord.js";
 import { injectable } from "inversify";
-import { MessageEmbedResponse } from "../message-handler";
-import { CommandHandler, Handle } from "./server-commands-config";
+import { MessageEmbedResponse, MessageResponse } from "../message-handler";
+import { CommandHandler, Handle, Teardown } from "./server-commands-config";
 import * as Danbooru from "danbooru";
 import * as GoogleSearch from "image-search-google";
+import Axios from "axios";
 
 @CommandHandler
 @injectable()
@@ -50,9 +51,10 @@ export class ServerImageService {
 
   public createEmbed = async (message, site) => {
     let post;
-    console.log("Message: " + message.content);
-    let tags = message.content.substring(message.content.indexOf(" ") + 1);
     let imageURL = "";
+    let tags = message.content.includes(" ")
+      ? message.content.substring(message.content.indexOf(" ") + 1)
+      : undefined;
 
     switch (site) {
       case "d":
@@ -63,7 +65,6 @@ export class ServerImageService {
             ? tags + " rating:safe"
             : tags;
         post = await this.getPost(tags, this.danbooru);
-        console.log(tags);
         imageURL = this.danbooru.url(post.file_url).href;
         if (imageURL === "https://danbooru.donmai.us/")
           return this.buildEmbed(0xff0000, "Error: No image found", "ExileTF2Bot", null, null);
@@ -161,5 +162,30 @@ export class ServerImageService {
     const imageList: MessageEmbedResponse[] = [];
     imageList.push(new MessageEmbedResponse(await this.createEmbed(message, null), false));
     return imageList;
+  };
+
+  @Handle("!gray")
+  public handleGrayImageRequest = async (message: Message): Promise<MessageResponse> => {
+    const rootURL = process.env.EXILETF2_ROOT_API;
+    const extension = "images";
+    const modifier = "grayScale";
+    let response: any;
+
+    try {
+      const imageURL = message.content.includes("http")
+        ? message.content.substring(message.content.indexOf(" ") + 1)
+        : (message.attachments as any).first().url;
+      response = await Axios({
+        method: "POST",
+        url: rootURL + extension,
+        responseType: "stream",
+        data: { image_url: imageURL, image_file: null, modifier: modifier },
+      });
+    } catch (err) {
+      return new MessageResponse("Image is invalid", false);
+    }
+
+    const filename = response.headers["content-disposition"].split("=")[1];
+    return new MessageResponse(new MessageAttachment(response.data, filename), false);
   };
 }

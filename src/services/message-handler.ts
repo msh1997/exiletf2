@@ -77,18 +77,18 @@ export class MessageHandler {
     await this.messageRepository.save(discordMessage);
   };
 
-  private sendMessage = (
+  private sendMessage = async (
     messageResponse: MessageResponse | MessageEmbedResponse[],
     message: Message
   ) => {
     if (!this.channelPermissionsService.canSend(message)) return;
     if (messageResponse instanceof MessageResponse) {
-      if (messageResponse.reply) message.reply(messageResponse.content);
-      else message.channel.send(messageResponse.content);
+      if (messageResponse.reply) await message.reply(messageResponse.content);
+      else await message.channel.send(messageResponse.content);
     } else {
-      messageResponse.forEach(response => {
-        if (response.reply) message.reply(response.embed);
-        else message.channel.send(response.embed);
+      messageResponse.forEach(async response => {
+        if (response.reply) await message.reply(response.embed);
+        else await message.channel.send(response.embed);
       });
     }
   };
@@ -96,10 +96,13 @@ export class MessageHandler {
   private processMessage = async (message: Message): Promise<void> => {
     try {
       const commandStr = message.content.split(" ")[0].trim();
-      if (COMMANDS[commandStr] != undefined) {
-        const messageResponse = await COMMANDS[commandStr].handler(message);
-        this.sendMessage(messageResponse, message);
-        if (COMMANDS[commandStr].save) this.saveMessage(message);
+      const command = COMMANDS[commandStr];
+      if (command !== undefined) {
+        const context = command.context;
+        const messageResponse = await command.handler(message, context);
+        await this.sendMessage(messageResponse, message);
+        if (command.teardown !== undefined) command.teardown(context);
+        if (command.save) this.saveMessage(message);
         return;
       }
       if (this.commandsService.isCommand(message)) {
@@ -113,7 +116,7 @@ export class MessageHandler {
     }
   };
 
-  handle = (message: Message): Promise<Message | Message[]> => {
+  handle = (message: Message, ...args): Promise<Message | Message[]> => {
     if (this.middleFingerRemover.handleMessage(message)) {
       return;
     }
@@ -122,10 +125,10 @@ export class MessageHandler {
 }
 
 export class MessageResponse {
-  public content: string | number;
+  public content: any;
   public reply: boolean;
 
-  constructor(content: string | number, reply: boolean) {
+  constructor(content: any, reply: boolean) {
     this.content = content;
     this.reply = reply;
   }

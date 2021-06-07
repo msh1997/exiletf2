@@ -1,9 +1,8 @@
-import { Message } from "discord.js";
+import { Message, MessageAttachment } from "discord.js";
 import { injectable } from "inversify";
 import { CommandHandler, Handle } from "./server-commands-config";
 import * as WolframAlphaAPI from "wolfram-alpha-api";
 import { MessageResponse } from "../message-handler";
-import * as Base64Img from "base64-img";
 
 @CommandHandler
 @injectable()
@@ -35,19 +34,8 @@ export class WolframQueryService {
     } else if (responseType === "image") {
       try {
         const imageURI = await this.wolfram.getSimple(queryMessage);
-        Base64Img.img(imageURI, "wolfram", "pootis", function (err, filepath) {
-          console.log(err);
-          console.log(filepath);
-        });
-        await message.channel.send({
-          files: [
-            {
-              attachment: "wolfram/pootis.gif",
-              name: "FuckYouExileTf2.gif",
-            },
-          ],
-        });
-        return new MessageResponse("", false);
+        const stream = Buffer.from(imageURI.split(",")[1], "base64");
+        return new MessageResponse(new MessageAttachment(stream), false);
       } catch {
         return new MessageResponse("Wolfram does not understand your query.", false);
       }

@@ -32,7 +32,6 @@
   "dependencies": {
     "@types/node": "^8.0.29",
     "axios": "^0.21.1",
-    "base64-img": "^1.0.4",
     "danbooru": "^3.1.0",
     "discord.js": "^12.5.3",
     "dotenv": "^9.0.2",
